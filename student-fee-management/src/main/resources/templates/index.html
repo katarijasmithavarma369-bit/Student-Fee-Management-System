@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Student Fee Management System</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        header {
+            background: #172554;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 5px;
+        }
+
+        .container {
+            width: 90%;
+            margin: 25px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px #ddd;
+        }
+
+        input, select {
+            padding: 12px;
+            margin: 8px 0;
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 13px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #172554;
+            color: white;
+        }
+
+        .message {
+            color: green;
+            font-weight: bold;
+        }
+
+        .history {
+            text-align: left;
+            font-size: 13px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #64748b;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Student Fee Management System</h1>
+    <p>Manage Student Records and Fee Payments</p>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h2>Dashboard</h2>
+        <h3>Total Students: <span th:text="${totalStudents}"></span></h3>
+        <p>Welcome to the Student Fee Management Portal.</p>
+        <p class="message" th:text="${param.message}"></p>
+    </div>
+
+    <div class="card">
+        <h2>Add Student</h2>
+
+        <form action="/add" method="post">
+
+            <input type="number" name="id"
+                   placeholder="Student ID" required>
+
+            <input type="text" name="name"
+                   placeholder="Student Name" required>
+
+            <input type="text" name="department"
+                   placeholder="Department" required>
+
+            <input type="number" name="totalFee"
+                   placeholder="Total Fee" min="0.01"
+                   step="0.01" required>
+
+            <button type="submit">Add Student</button>
+
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Record Payment</h2>
+
+        <form action="/payment" method="post">
+
+            <input type="number" name="id"
+                   placeholder="Student ID" required>
+
+            <input type="number" name="amount"
+                   placeholder="Payment Amount"
+                   min="0.01" step="0.01" required>
+
+            <button type="submit">Submit Payment</button>
+
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Search Student</h2>
+
+        <form action="/" method="get">
+
+            <input type="number" name="searchId"
+                   placeholder="Enter Student ID">
+
+            <button type="submit">Search</button>
+
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Filter Payment Status</h2>
+
+        <form action="/" method="get">
+
+            <select name="status">
+                <option value="">All Students</option>
+                <option value="Fully Paid">Fully Paid</option>
+                <option value="Partially Paid">Partially Paid</option>
+                <option value="Unpaid">Unpaid</option>
+            </select>
+
+            <button type="submit">Filter</button>
+
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Student Records</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Total Fee</th>
+                    <th>Paid</th>
+                    <th>Balance</th>
+                    <th>Status</th>
+                    <th>Payment History</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr th:each="s : ${students}">
+
+                    <td th:text="${s.id}"></td>
+                    <td th:text="${s.name}"></td>
+                    <td th:text="${s.department}"></td>
+                    <td th:text="${s.totalFee}"></td>
+                    <td th:text="${s.totalPaid}"></td>
+                    <td th:text="${s.balance}"></td>
+                    <td th:text="${s.status}"></td>
+
+                    <td class="history">
+                        <div th:each="p : ${s.payments}">
+                            <span th:text="${p.date}"></span>
+                            -
+                            ₹<span th:text="${p.amount}"></span>
+                        </div>
+
+                        <span th:if="${#lists.isEmpty(s.payments)}">
+                            No Payments
+                        </span>
+                    </td>
+
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(students)}">
+                    <td colspan="8">No student records found.</td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<div class="footer">
+    Student Fee Management System | Java Spring Boot
+</div>
+
+</body>
+</html>
